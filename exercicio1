@@ -1,0 +1,84 @@
+//
+//  TestaPrimo.c
+//  TestaPrimo
+//
+//  Created by Ricardo de Carvalho Destro on 12/08/20.
+//  Copyright © 2020 Ricardo de Carvalho Destro. All rights reserved.
+//
+
+#include <iostream>
+#include <cstdlib>
+#include <time.h>
+#include <math.h>
+
+/* Convencao: EhPrimo = 1 se o numero dado for primo */
+/*  EhPrimo = 0 se o numero dado nao for primo       */
+
+using namespace std;
+
+int TestaPrimo(long int n) {
+    int EhPrimo = 1,
+        d=2;
+    if (n <= 1)
+        EhPrimo = 0;
+    
+    while (EhPrimo == 1 && d <= n /2) {
+        if (n % d  == 0)
+            EhPrimo = 0;
+
+        d = d + 1;
+    }
+    
+    return EhPrimo;
+}
+
+double desvioPadrao(double vetor[31], double tempoMedio){
+    double dp=0, soma=0;
+    for(int i=0; i<30; i++){
+        soma += pow(vetor[i]-tempoMedio, 2);
+    }
+    dp = sqrt(soma/30);
+
+    return dp;
+}
+
+int main() {
+    int cont;
+    long int num;
+    time_t ini, fim;
+    double tempo, allTime=0, tempoMedio=0;
+    double vetor[31];
+
+    cin >> num;
+
+    int i=0;
+    while(num > 0){
+        for(int i=0; i<30; i++){
+          ini = clock();
+          if(TestaPrimo(num))
+              cont = 1;
+          else
+              cont = 0;
+
+          fim = clock();
+          tempo = ((double) (fim - ini) / CLOCKS_PER_SEC);
+
+          vetor[i] = tempo;
+          allTime += tempo;
+          i++;
+        }
+        tempoMedio = allTime/30;
+        if(cont == 1)
+            cout << "É primo" << endl;
+        else
+            cout << "Não é primo" << endl;
+
+        printf("Tempo de execução médio: %lf\nDesvio padrão: %lf\n", tempoMedio, desvioPadrao(vetor, tempoMedio));
+
+        cin >> num;
+        i=0;
+    }
+
+    system("pause");
+	  return 0;
+}
