@@ -1,0 +1,87 @@
+
+#include <iostream>
+#include <cstdlib>
+#include <time.h>
+#include <math.h>
+
+/* Convencao: EhPrimo = 1 se o numero dado for primo */
+/*  EhPrimo = 0 se o numero dado nao for primo       */
+
+using namespace std;
+
+//Teste se é primo usando apenas metade do tempo
+int TestaPrimo(long int n) {
+    int EhPrimo = 1;
+
+    if(n == 2)
+        return 1;
+
+    if (n < 1 || n % 2 == 0)
+        EhPrimo = 0;
+
+    //Este for so calcula até a metade de cada numero escolhido
+    // Se o numero não for divisivel até sua metade, ele não será divisivel por mais nada além dele mesmo.
+    // Assim retornando 0 se não for primo e retornando 1 se ele for primo
+    for (int i=3; i <= n/2; i+=2){
+        if (n % i == 0)
+            return 0;
+    }
+    //OBS Assim economiza metade do tempo pois não calcula até o final de cada numero.
+    return EhPrimo;
+}
+
+//Função para calcular o desvio padrao de todos os resultados que está guardado no vetor
+double desvioPadrao(double vetor[31], double tempoMedio){
+    double dp=0, soma=0;
+    for(int i=0; i<30; i++){
+        soma += pow(vetor[i]-tempoMedio, 2);
+    }
+    dp = sqrt(soma/30);
+
+    return dp;
+}
+
+int main() {
+    int cont;
+    long int num;
+    time_t ini, fim;
+    double tempo, allTime=0, tempoMedio=0;
+    double vetor[31];
+
+    cin >> num;
+
+    int i=0;
+    while(num > 0){
+        for(int i=0; i<30; i++){
+          ini = clock(); // Inicia o contador para saber o tempo de execução do programa
+
+          //Contador se for primo soma +1 Se não fica no 0
+          if(TestaPrimo(num))
+              cont = 1;
+          else
+              cont = 0;
+
+          fim = clock(); // Termina o contador para saber o tempo de execução do programa
+          tempo = ((double) (fim - ini) / CLOCKS_PER_SEC);
+
+          vetor[i] = tempo; // Guarda o tempo de execução
+          allTime += tempo; // Guarda o tempo total somando todos os resultados
+          i++;
+        }
+        tempoMedio = allTime/30; // Faz a media de todos os tempos
+        // Se é ou não primo
+        if(cont == 1)
+            cout << "É primo" << endl;
+        else
+            cout << "Não é primo" << endl;
+
+        // Imprime os resultados depois de chamar a função para tempo medio.
+        printf("Tempo de execução médio: %lf\nDesvio padrão: %lf\n", tempoMedio, desvioPadrao(vetor, tempoMedio));
+
+        cin >> num;
+        i=0;
+    }
+
+    system("pause");
+	  return 0;
+}
